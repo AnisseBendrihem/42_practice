@@ -3,12 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   rev_print.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abendrih <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 15:27:10 by abendrih          #+#    #+#             */
-/*   Updated: 2025/06/20 15:54:42 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/06/23 01:17:48 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+// Assignment name  : rev_print
+// Expected files   : rev_print.c
+// Allowed functions: write
+// --------------------------------------------------------------------------------
+
+// Write a program that takes a string, and displays the string in reverse
+// followed by a newline.
+
+// If the number of parameters is not 1, the program displays a newline.
+
+// Examples:
+
+// $> ./rev_print "zaz" | cat -e
+// zaz$
+// $> ./rev_print "dub0 a POIL" | cat -e
+// LIOP a 0bud$
+// $> ./rev_print | cat -e
+// $
 
 int	ft_strlen(char *str)
 {
