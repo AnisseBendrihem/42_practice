@@ -64,3 +64,5 @@ fprime
 search_and_replace
 max
 ft_list_size
+ft_print_numbers
+get_next_line

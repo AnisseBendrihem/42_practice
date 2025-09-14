@@ -1,0 +1,12 @@
+In file included from get_next_line/get_next_line.c:13:
+get_next_line/get_next_line.h:16: error: "BUFFER_SIZE" redefined [-Werror]
+   16 | # define BUFFER_SIZE 42
+      | 
+<command-line>: note: this is the location of the previous definition
+cc1: all warnings being treated as errors
+
+(null)\n
+\n
+-------
+\n
+-------

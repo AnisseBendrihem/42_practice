@@ -1,9 +1,0 @@
-----------------8<-------------[ START TEST 
-        💻 TEST
-./a.out "7" "-42" "0" "-5" "-64" "-2" "-68" "-1"         🔎 YOUR OUTPUT:
-../../rendu/max/max.c:31:1: error: expected identifier or ‘(’ before ‘{’ token
-   31 | {
-      | ^
-
-        ❌ COMPILATION ERROR
-----------------8<------------- END TEST ]
