@@ -5,23 +5,22 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/14 18:05:24 by abendrih          #+#    #+#             */
-/*   Updated: 2025/09/14 20:21:04 by abendrih         ###   ########.fr       */
+/*   Created: 2025/10/07 17:32:17 by abendrih          #+#    #+#             */
+/*   Updated: 2025/10/07 17:39:11 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fcntl.h>
-#include <stdio.h>
+#include <stddef.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <string.h>
 
-char	*ft_strdup(char *src)
+char *ft_strdup(char *src)
 {
-	int		i;
-	char	*dest;
-
-	i = 0;
+	int i = 0;
+	char *dest;
+	
 	while (src[i])
 		i++;
 	dest = malloc(sizeof(char) * (i + 1));
@@ -32,37 +31,36 @@ char	*ft_strdup(char *src)
 	{
 		dest[i] = src[i];
 		i++;
-	}
+	} 
 	dest[i] = '\0';
-	return (dest);
+	return(dest);
 }
 
-char	*get_next_line(int fd)
+char *get_next_line(int fd)
 {
-	char		line[10000];
-	static char	recip[BUFFER_SIZE];
-	static int	readed = 0;
-	static int	j = 0;
-	int			i;
+	static int j = 0;
+	static int readed = 0;
+	static char buffer[BUFFER_SIZE];
+	char line [10000];
+	int i = 0;
 
-	i = 0;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	while (1)
 	{
 		if (j >= readed)
 		{
-			readed = read(fd, recip, BUFFER_SIZE);
+			readed = read(fd, buffer, BUFFER_SIZE);
 			j = 0;
-			if (readed == 0)
-				break ;
+			if(readed == 0)
+				break;
 		}
-		line[i++] = recip[j++];
+		line[i++] = buffer[j++];
 		if (line[i - 1] == '\n')
-			break ;
+			break;
 	}
 	if (i == 0)
 		return (NULL);
 	line[i] = '\0';
-	return (ft_strdup(line));
+	return(ft_strdup(line));
 }

@@ -6,54 +6,86 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 13:48:16 by abendrih          #+#    #+#             */
-/*   Updated: 2025/09/12 13:49:48 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/10/09 01:40:15 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// Assignment name : powerset
-// Expected files : *.c *.h
-// Allowed functions : atoi, printf, malloc, calloc, realloc, free.
-// ---------------------------------------------------------------
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
-// Write a program that will take as argument an integer n follow by a set of integers,
-// your program should display all the subsets of whose sum of elements is n.
+int	ssum(int *subset)
+{
+	int	i;
+	int	sum;
 
-// In case of a malloc error your program will exit with the code 1.
-// We will not test invalid test(for example '1 1 2')
-// hint: the empty set is a subset of anyset.
+	i = 0;
+	sum = 0;
+	while (subset[i])
+	{
+		sum += subset[i];
+		i++;
+	}
+	return (sum);
+}
 
+void	powerset(int *set, int *subset, int target, int index, int nbr_val,
+		int len_subset)
+{
+	int	i;
+	int	sum;
 
-// For example this should work:
-// $> ./powerset 3 1 0 2 4 5 3 | cat -e
-// 3$
-// 0 3$
-// 1 2$
-// 1 0 2$
-// $> ./powerset 12 5 2 1 8 4 3 7 11 | cat -e
-// 8 4$
-// 1 11$
-// 1 4 7$
-// 2 3 7$
-// 5 4 3$
-// 5 7$
-// 5 2 1 4$
-// $> ./powerset 7 3 8 2| cat -e
-// $
-// $> ./powerset 0 1 -1| cat -e
-// 1 -1$
+	i = 0;
+	sum = ssum(subset);
+	if (sum == target)
+	{
+		i = 0;
+		while (i < len_subset)
+		{
+			printf("%d ", subset[i]);
+			i++;
+		}
+		printf("\n");
+		return ;
+	}
+	
+	while (index < nbr_val)
+	{
+		if (sum + set[index] <= target)
+		{
+			subset[len_subset] = set[index];
+			powerset(set, subset, target, index + 1, nbr_val, len_subset + 1);
+			subset[len_subset] = 0;
+		}
+		index++;
+	}
+}
 
-// The order of lines is not important, but the order of the element in a subset is.
-// You must not have any duplicates (for example 2 1, 1 2)
-// $> ./powerset 5 1 2 3 4 5| cat -e
-// valid:
-// 1 4$
-// 2 3$
-// 5$
+int	main(int ac, char **av)
+{
+	int	i;
+	int	target;
+	int	nbr_val;
+	int	*set;
+	int	*subset;
 
-// or:
-// 2 3$
-// 5$
-// 1 4$
-// not valid:
-// 4 1$
-// 3 2$
+	i = 0;
+	if (ac <= 2)
+		return (1);
+	target = atoi(av[1]);
+	nbr_val = ac - 2;
+	set = malloc(sizeof(int) * (nbr_val));
+	subset = malloc(sizeof(int) * (nbr_val));
+	while (i < nbr_val)
+	{
+		set[i] = atoi(av[i + 2]);
+		subset[i] = 0;
+		i++;
+	}
+	powerset(set, subset, target, 0, nbr_val, 0);
+	free(set);
+	free(subset);
+	return (0);
+}
+

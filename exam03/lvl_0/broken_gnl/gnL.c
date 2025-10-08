@@ -1,29 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   gnL.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/07 17:32:17 by abendrih          #+#    #+#             */
-/*   Updated: 2025/10/07 17:39:11 by abendrih         ###   ########.fr       */
+/*   Created: 2025/09/18 21:01:13 by abendrih          #+#    #+#             */
+/*   Updated: 2025/10/08 12:52:36 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
-char *ft_strdup(char *src)
+#define BUFFER_SIZE 42
+
+char	*ft_strdup(char *src)
 {
-	int i = 0;
-	char *dest;
-	
+	int		i;
+	char	*dest;
+
+	i = 0;
 	while (src[i])
 		i++;
-	dest = malloc(sizeof(char) * (i + 1));
+	dest = malloc(sizeof(char) * i + 1);
 	if (!dest)
 		return (NULL);
 	i = 0;
@@ -31,19 +34,20 @@ char *ft_strdup(char *src)
 	{
 		dest[i] = src[i];
 		i++;
-	} 
+	}
 	dest[i] = '\0';
-	return(dest);
+	return (dest);
 }
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
-	static int j = 0;
-	static int readed = 0;
-	static char buffer[BUFFER_SIZE];
-	char line [10000];
-	int i = 0;
+	static int	j = 0;
+	static int	readed;
+	static char	buffer[BUFFER_SIZE];
+	char		line[10000];
+	int			i;
 
+	i = 0;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	while (1)
@@ -52,15 +56,32 @@ char *get_next_line(int fd)
 		{
 			readed = read(fd, buffer, BUFFER_SIZE);
 			j = 0;
-			if(readed == 0)
-				break;
+			if (readed == 0)
+				break ;
 		}
 		line[i++] = buffer[j++];
 		if (line[i - 1] == '\n')
-			break;
+			break ;
 	}
 	if (i == 0)
 		return (NULL);
 	line[i] = '\0';
-	return(ft_strdup(line));
+	return (ft_strdup(line));
+}
+
+int	main(void)
+{
+	int		fd;
+	char	*line;
+
+	fd = open("file.txt", O_RDONLY);
+	line = get_next_line(fd);
+	while (line)
+	{
+		printf("%s", line);
+		free(line);
+		line = get_next_line(fd);
+	}
+	close(fd);
+	return (0);
 }

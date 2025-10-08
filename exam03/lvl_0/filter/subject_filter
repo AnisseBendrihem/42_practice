@@ -21,3 +21,5 @@ $> echo 'abcdefgaaaabcdefabc' | ./filter abc | cat -e
 
 If the program is called whitout argument or with an empty argument or with
 multiples arguments it must return 1.
+
+
