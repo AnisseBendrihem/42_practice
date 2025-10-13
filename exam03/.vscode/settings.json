@@ -1,5 +1,5 @@
 {
     "files.associations": {
-        "gnl.h": "c"
+        "string.h": "c"
     }
 }

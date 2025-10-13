@@ -5,20 +5,13 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: baron_kakka <baron_kakka@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/12 13:48:16 by abendrih          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/10/09 01:40:15 by abendrih         ###   ########.fr       */
-=======
-/*   Updated: 2025/10/13 17:25:51 by baron_kakka      ###   ########.fr       */
->>>>>>> f4f07f5 (progress(exam03): mastered all exercises except nqueen and rip)
+/*   Created: 2025/10/13 17:52:41 by baron_kakka       #+#    #+#             */
+/*   Updated: 2025/10/13 17:53:21 by baron_kakka      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
-<<<<<<< HEAD
-#include <string.h>
-#include <unistd.h>
 
 int	ssum(int *subset)
 {
@@ -93,67 +86,3 @@ int	main(int ac, char **av)
 	free(subset);
 	return (0);
 }
-
-=======
-
-int summ(int *subset, int len)
-{
-    int i = 0;
-    int sum = 0;
-    while (i < len)
-    {
-        sum += subset[i];
-        i++;
-    }
-    return (sum);
-}
-
-void powerset(int target, int *set, int *subset, int len_set, int idx, int len_subset)
-{
-    int i = 0;
-    int sum = summ(subset, len_subset);
-    
-    if( sum == target)
-    {
-        while (i < len_subset)
-        {
-            printf("%d", subset[i]);
-            if (i != len_subset -1)
-                printf(" ");
-            i++;
-        }
-        printf("\n");
-    }
-    while (idx < len_set)
-    {
-        if (set[idx] + sum <= target)
-        {
-            subset[len_subset] = set[idx];
-            powerset(target, set, subset, len_set, idx + 1, len_subset + 1);
-            subset[len_subset] = 0;
-        }
-        idx++;
-    }
-}
-
-int main (int ac , char **av)
-{
-    int target;
-    int *set;
-    int *subset;
-    int len_set;
-
-    if (ac <= 2)
-        return (1);
-    len_set = ac - 2;
-    target = atoi(av[1]);
-    set = malloc(sizeof(int) * len_set);
-    subset = malloc(sizeof(int) * len_set);
-    for (int i = 0; i < len_set; i++)
-    {
-        set[i] = atoi(av[i + 2]);
-        subset[i] = 0;
-    }
-    powerset(target, set, subset, len_set, 0, 0);
-}
->>>>>>> f4f07f5 (progress(exam03): mastered all exercises except nqueen and rip)

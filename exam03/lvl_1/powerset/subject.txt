@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    subject.txt                                        :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/10/08 22:21:49 by abendrih          #+#    #+#              #
-#    Updated: 2025/10/08 22:21:53 by abendrih         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
-=======
->>>>>>> f4f07f5 (progress(exam03): mastered all exercises except nqueen and rip)
 // Assignment name : powerset
 // Expected files : *.c *.h
 // Allowed functions : atoi, printf, malloc, calloc, realloc, free.
