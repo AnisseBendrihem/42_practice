@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
@@ -10,6 +11,8 @@
 #                                                                              #
 # **************************************************************************** #
 
+=======
+>>>>>>> f4f07f5 (progress(exam03): mastered all exercises except nqueen and rip)
 // Assignment name : powerset
 // Expected files : *.c *.h
 // Allowed functions : atoi, printf, malloc, calloc, realloc, free.

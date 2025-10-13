@@ -1,9 +1,0 @@
-/usr/bin/ld: /tmp/ccD9n1o7.o: in function `main':
-mainstud.c:(.text+0x40): undefined reference to `get_next_line'
-collect2: error: ld returned 1 exit status
-
-(null)\n
-\n
--------
-\n
--------

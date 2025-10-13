@@ -3,35 +3,65 @@
 /*                                                        :::      ::::::::   */
 /*   permutation.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
+/*   By: baron_kakka <baron_kakka@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 13:48:13 by abendrih          #+#    #+#             */
-/*   Updated: 2025/09/12 13:49:30 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/10/13 17:24:56 by baron_kakka      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// Assignment name : permutations
+#include <stdio.h>
 
-// Expected files : *.c *.h
-// Allowed functions : puts, malloc, calloc, realloc, free, write
-// ---------------------------------------------------------------
+int	ft_strlen(char *s)
+{
+	int i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
 
-// Write a program that will print all the permutations of a string given as argument.
+void ft_swap(char *a, char *b)
+{
+    char tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
 
-// The solutions must be given in alphabetical order.
+void ft_sort(char *str)
+{
+    for(int i = 0; str[i]; i++)
+        for(int j = 0; str[j]; j++)
+            if (str[j] > str[i])
+                ft_swap(&str[i], &str[j]);
+}
 
-// We will not try your program with strings containing duplicates (eg: 'abccd')
+int permute(char *str, int len)
+{
+    int i = len -2;
+    int j = len -1;
+    int r = len -1;
+    int l;
 
-// For example this should work:
-// $> ./permutations a | cat -e
-// a$
-// $> ./permutations ab | cat -e
-// ab$
-// ba$
-// $> ./permutations abc | cat -e
-// abc$
-// acb$
-// bac$
-// bca$
-// cab$
-// cba$
+    while (i >= 0 && str[i] >= str[i + 1])
+        i--;
+    if (i < 0)
+        return (0);
+    while (str[j] <= str[i])
+        j--;
+    ft_swap(&str[i], &str[j]);
+    l = i +1;
+    while (l < r)
+        ft_swap(&str[l++], &str[r--]);
+    return (1);
+}
+
+int main (int ac, char **av)
+{
+    if (ac != 2)
+        return (1);
+    ft_sort(av[1]);
+    puts(av[1]);
+    while (permute(av[1], ft_strlen(av[1])))
+        puts(av[1]);
+    return (0);
+}
