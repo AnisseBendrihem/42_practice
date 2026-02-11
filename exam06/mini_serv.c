@@ -1,11 +1,12 @@
+#include <errno.h>
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <netdb.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-/*  ========== COPIE-COLLE DU MAIN DONNE ==========  */
 int extract_message(char **buf, char **msg)
 {
 	char	*newbuf;
@@ -51,120 +52,119 @@ char *str_join(char *buf, char *add)
 	strcat(newbuf, add);
 	return (newbuf);
 }
-//---------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
 
-int		count = 0;       // compteur d'id client
-int		max_fd = 0;      // plus grand fd actif
-int		ids[65536];      // id du client pour chaque fd
-char	*msgs[65536];    // buffer de message partiel par fd
+int count = 0;  // compteur de client
+int max_fd = 0;  //le plus gros fd 
+int ids[65536]; //id du client pour chaque fd 
+char* msgs[65536]; // message 
+fd_set afds, wfds, rfds; //
+char buf_read[1001];  // buffer pour recv
+char buf_write[42];    // buffer pour sprintf
 
-fd_set	afds, rfds, wfds;        // all / read / write
-char	buf_read[1001];          // buffer recv
-char	buf_write[42];           // buffer sprintf
-
-void fatal_error(void)
+void fatal_error()
 {
-	write(2, "Fatal error\n", 12);
-	exit(1);
+    write (2, "Fatal error\n", 12);
+    exit(1);
 }
-void notify_all(int author, char *str)
+
+void notify_all(int autor, char*str)
 {
-	for (int fd = 0; fd <= max_fd; fd++)
-		if (FD_ISSET(fd, &wfds) && fd != author)
-			send(fd, str, strlen(str), 0);
+    for (int fd = 0; fd <= max_fd; fd++) // boucle pour parcourir tout les fd 
+    {
+        if (FD_ISSET(fd, &wfds) && fd != autor) // chercher les fd qui sont dans le set et aussi que cest pas lui meme 
+            send(fd, str, strlen(str), 0); // envoyer le message au fd
+    }
 }
 void add_client(int fd)
 {
-	if (fd > max_fd)
-		max_fd = fd;
-	ids[fd] = count++;
-	msgs[fd] = NULL;
-	FD_SET(fd, &afds);
-	sprintf(buf_write, "server: client %d just arrived\n", ids[fd]);
-	notify_all(fd, buf_write);
+    if (fd > max_fd) //verif si le fd nest pas plus grand que le max 
+        max_fd = fd; //sinon mettre a jour le max
+    ids[fd] = count ++; //donner un son id au fd
+    msgs[fd] = NULL; // mettre le message a null
+    FD_SET(fd, &afds); //ajouter le nouveau clien au tableau
+    sprintf(buf_write, "server: client %d just arrived\n", ids[fd]); //stocker la phrase de la venue 
+    notify_all(fd, buf_write); // sannonce a tout les autres 
 }
 void rm_client(int fd)
 {
-	sprintf(buf_write, "server: client %d just left\n", ids[fd]);
-	notify_all(fd, buf_write);
-	free(msgs[fd]);
-	FD_CLR(fd, &afds);
-	close(fd);
+    sprintf(buf_write, "server: client %d just left\n", ids[fd]); //stocker la phrase de la venue 
+    notify_all(fd, buf_write); // sannonce a tout les autres 
+    free(msgs[fd]); // free ses messages 
+    FD_CLR(fd , &afds); // le degager du set 
+    close(fd); //le fermer
 }
 void send_msg(int fd)
 {
-	char *msg;
-
-	while (extract_message(&msgs[fd], &msg))
-	{
-		sprintf(buf_write, "client %d: ", ids[fd]);
-		notify_all(fd, buf_write);
-		notify_all(fd, msg);
-		free(msg);
-	}
+    char *msg;
+    while (extract_message(&msgs[fd], &msg))
+    {
+        sprintf(buf_write, "client %d: ", ids[fd]); //stocker la phrase de son id 
+        notify_all(fd, buf_write); //affiche son nom :
+        notify_all(fd, msg); //print sa phrase 
+        free(msg); //free le msg
+    }
 }
 
-int main(int ac, char **av)
+int main(int ac, char **av) 
 {
-	if (ac != 2)
-	{
-		write(2, "Wrong number of arguments\n", 26);
-		exit(1);
-	}
+    if (ac != 2) // verif des arument 
+    {
+        write (2, "Wrong number of arguments\n", 26); // print message derreur 
+        exit(1); // exit le programme
+    }
+	int sockfd;
+	struct sockaddr_in servaddr; 
 
-	// --- copie-colle du main donne (adapte) ---
-	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd < 0)
-		fatal_error();
+	sockfd = socket(AF_INET, SOCK_STREAM, 0); 
+	if (sockfd < 0) 
+        fatal_error();
+	bzero(&servaddr, sizeof(servaddr)); 
 
-	struct sockaddr_in servaddr;
-	bzero(&servaddr, sizeof(servaddr));
-	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = htonl(2130706433); // 127.0.0.1
-	servaddr.sin_port = htons(atoi(av[1]));
+	// assign IP, PORT 
+	servaddr.sin_family = AF_INET; 
+	servaddr.sin_addr.s_addr = htonl(2130706433); //127.0.0.1
+	servaddr.sin_port = htons(atoi(av[1])); 
 
-	if (bind(sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)))
-		fatal_error();
-	if (listen(sockfd, SOMAXCONN))
-		fatal_error();
-	// --- fin copie-colle ---
+	if ((bind(sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr))) != 0)
+            fatal_error();
+	if (listen(sockfd, 10) != 0)
+            fatal_error();
+    max_fd = sockfd; // mettre max_fd a la valeur du serv
+    FD_ZERO(&afds); // sassurer que  afds est vide 
+    FD_SET(sockfd, &afds);// inserer le serv dans asdf
 
-	max_fd = sockfd;
-	FD_ZERO(&afds);
-	FD_SET(sockfd, &afds);
+    while(1)
+    {
+        rfds = wfds = afds; // reinitialise les set de lecture et decriture 
+        if (select(max_fd + 1, &rfds, &wfds, NULL, NULL) < 0) //select va retireer ceux qui sont pas pret et modifier rfds et wfds
+            fatal_error(); // protection en cas dechec de select
+        
+        for (int fd = 0; fd <= max_fd; fd++) // on parcour tout les fd jusqua atteindre max_fd
+        {
+            if (!FD_ISSET(fd, &rfds)) // on check si le fd est dans rfds 
+                continue;            //sinon on passe au suivant 
 
-	while (1)
-	{
-		rfds = wfds = afds;
-		if (select(max_fd + 1, &rfds, &wfds, NULL, NULL) < 0)
-			fatal_error();
+            // nouvelle connection
+            if (fd == sockfd) // si cest le serveur qui a ete select 
+            {
+                socklen_t len = sizeof(servaddr);// size du serv pour utilise accpet
+                int client = accept(sockfd, (struct sockaddr *)&servaddr, &len); //stocker le fd du clien qui essey de se connecter au serveur 
+                if (client >=0) // si accept na pa eu derrur 
+                    add_client(client); // ajouter le fd a afds
+                break; // puis on sort quelque sois et on repart a select
+            }
 
-		for (int fd = 0; fd <= max_fd; fd++)
-		{
-			if (!FD_ISSET(fd, &rfds))
-				continue;
-
-			// Nouvelle connexion
-			if (fd == sockfd)
-			{
-				socklen_t len = sizeof(servaddr);
-				int client = accept(sockfd, (struct sockaddr *)&servaddr, &len);
-				if (client >= 0)
-					add_client(client);
-				break;
-			}
-
-			// Message ou deconnexion
-			int n = recv(fd, buf_read, 1000, 0);
-			if (n <= 0)
-			{
-				rm_client(fd);
-				break;
-			}
-			buf_read[n] = '\0';
-			msgs[fd] = str_join(msgs[fd], buf_read);
-			send_msg(fd);
-		}
-	}
-	return 0;
+            //message ou deco
+            int n = recv(fd, buf_read, 1000, 0); //on regarde si on a ecrit dans ce fd et on stock dans bufread
+            if (n <= 0) // si recv nous return 0 = le client s'est déconnecté. Négatif = erreur.
+            {
+                rm_client(fd); // deconection 
+                break;
+            }
+            buf_read[n] = '\0'; // on finit notre message 
+            msgs[fd] = str_join(msgs[fd], buf_read); //on le concatene et le stocke dans msgs
+            send_msg(fd); //on envoie le msg a tout le monde 
+        }
+    }
 }
